@@ -14,6 +14,11 @@ class Minesweeper:
         #this might require more than just this function
         pass
 
+    def MineAlgorithm(self, x, y, n):
+        pass
+
+    #Nothing should return matrix, should just use internal
+    #UI should only call outcome and flag, use self.matrix
     def Outcome(self, x, y):
         #this should determine game outcome/win/loss
         pass
@@ -22,4 +27,3 @@ class Minesweeper:
         #this should flag a square
         #ensure that other information is not lost
         pass
-    
