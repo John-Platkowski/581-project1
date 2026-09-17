@@ -60,6 +60,16 @@ class Minesweeper:
     def MineAlgorithm(self, x, y, n):
         pass
 
+    def _Neighbors(self, x, y):
+        #The in bounds cells touching (x, y)
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                if dx == 0 and dy == 0:
+                    continue
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < self.x_size and 0 <= ny < self.y_size:
+                    yield (nx, ny)
+
     #Nothing should return matrix, should just use internal
     #UI should only call outcome and flag, use self.matrix
     def Outcome(self, x, y):
