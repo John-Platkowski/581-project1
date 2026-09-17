@@ -1,4 +1,8 @@
 
+#Values for self.matrix, but perhaps we want it more coherent/extensible so these are consts
+EMPTY = 0
+MINE = 1
+
 #This class will only really store the board state & functions
 #PLEASE FEEL FREE TO MAKE EDITS JUST INSURE THAT YOU CHANGE OTHER CORRESPONDING CALLS
 class Minesweeper:
@@ -46,13 +50,12 @@ class Minesweeper:
         return
 
     def CheckSquare(self, x, y):
-        #this should return square state / adjacent bombs
-        #this might require more than just this function
-
-        #Note from Tyler: I'm assuming in RecOpen that this will return an integer that represents the number
-        #of mines bordering the cell given
-        #If you implement it differently, let me know and I will update RecOpen
-        pass
+        #Returns how many mines border (x, y)
+        count = 0
+        for nx, ny in self._Neighbors(x, y):
+            if self.matrix[nx][ny] == MINE:
+                count += 1
+        return count
 
     def MineAlgorithm(self, x, y, n):
         pass
