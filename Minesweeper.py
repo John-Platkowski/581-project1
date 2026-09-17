@@ -8,7 +8,7 @@ class Minesweeper:
         self.x_size = 10
         self.y_size = 10
         #Array to track where RecOpen has been
-        self.visited = [[0] * self.x_size for _ in range(self.y_size)]
+        self.visited = [[0] * self.y_size for _ in range(self.x_size)]
 
     def RecOpen(self, x, y):
         #Check if the coords passed in are invalid 
