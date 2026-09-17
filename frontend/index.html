@@ -6,5 +6,275 @@
 <body>
     <h1>Minesweeper</h1>
     <p>Code to test if fastapi is serving the frontend as intended.</p>
+    <!-- Test Buttons -->
+    <button type="button" onClick="generateTable()">generateTable</button>
+    <button type="button" onClick="populateTableDummy()">populateTable (With Dummy Elements)</button>
+    <button type="button" onClick="showWinScreen()">showWinScreen</button>
+    <button type="button" onClick="showLossScreen()">showLossScreen</button>
+
+    <!-- Stores Game -->
+    <div id="boardDiv"></div>
 </body>
 </html>
+
+<style>
+
+#boardDiv {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.endGameText {
+    font-size: 100pt;
+    position: absolute;
+    top: 800px;
+}
+
+.winText {
+    font-family: serif;
+    color: green;
+}
+
+.lossText {
+    font-family: serif;
+    color: red;
+}
+
+.boardTable {
+    border-style: solid;
+    border-width: 10px;
+    background-color: black;
+}
+
+.boardCell {
+    border-style: solid;
+    border-width: 10px;
+    border-color: lightgrey;
+
+    background-color: lightgrey;
+
+    height: 50px;
+    width: 50px;
+    text-align: center;
+    font-size: xx-large;
+
+    font-family: monospace;
+    font-weight: bolder;
+}
+
+.boardCellUnseen {
+    border-style: outset;
+}
+
+.boardCellValue1 {
+    color: blue;
+}
+.boardCellValue2 {
+    color: green;
+}
+.boardCellValue3 {
+    color: red;
+}
+.boardCellValue4 {
+    color: darkblue;
+}
+.boardCellValue5 {
+    color: darkred;
+}
+.boardCellValue6 {
+    color: darkcyan;
+}
+.boardCellValue7 {
+    color: black;
+}
+.boardCellValue8 {
+    color: grey;
+}
+
+</style>
+
+<script>
+
+
+//generates dummy data and feeds it to populate table, purely for test purposes
+function populateTableDummy() {
+    const data = [];
+    for (let x = 0; x < 10; x++){
+        data[x] = [];
+        for (let y = 0; y < 10; y++){
+            data[x][y] = x+y-5;
+        }
+    }
+
+
+    populateTable(data);
+}
+
+
+
+
+//called on left click
+function cellClicked(x, y){
+    console.log(`clicked ${x}, ${y}`);
+}
+//called on right click
+function cellFlagged(x, y){
+    console.log(`flagged ${x}, ${y}`);
+}
+
+//shows win screen
+function showWinScreen() {
+    //create text element
+    const winText = document.createElement("p");
+
+    //style to win end text
+    winText.classList = "endGameText winText";
+
+    //fill text
+    winText.textContent = "YOU WIN";
+    
+    //add to game screen
+    boardDiv.appendChild(winText);
+}
+
+//shows loss screen
+function showLossScreen() {
+    //create text element
+    const lossText = document.createElement("p");
+    
+    //style to loss end text
+    lossText.classList = "endGameText lossText";
+    
+    //fill text
+    lossText.textContent = "YOU LOSE";
+    
+    //add to game screen
+    boardDiv.appendChild(lossText);
+}
+
+//uses given data to populate cells
+function populateTable(data) {
+    //loop through rows
+    for (let x = 0; x < 10; x++){
+
+        //split data to row
+        const row = data[x];
+
+        //loop through columns
+        for (let y = 0; y < 10; y++){
+
+            //split row to cell value
+            const cell = row[y];
+
+            //find the given cell by position
+            const boardCell = document.querySelector(`[position="${x}, ${y}"]`);
+            
+            //fill in text by default
+            boardCell.textContent = cell;
+
+            //classify it for styling as a revealed square
+            boardCell.classList = `boardCell boardCellValue${cell}`;
+
+
+            //based on special cell values
+            if(cell == 0){
+                //empty on zero
+                boardCell.textContent = "";
+            }
+            if(cell == -1){
+                //flag on -1
+                boardCell.textContent = "🚩";
+            }
+            if(cell == -2){
+                //explosion on -2 (clicked mine)
+                boardCell.textContent = "💥";
+            }
+            if(cell == -3){
+                //bomb on -3 (unclicked mine revealed on failure)
+                boardCell.textContent = "💣";
+            }
+            if(cell == -4){
+                //unrevealed on -4
+                boardCell.textContent = "";
+                //style for raised square
+                boardCell.classList = "boardCell boardCellUnseen";
+            }
+        }
+    }
+}
+
+//creates table onscreen
+function generateTable() {
+    //find board container
+    const boardDiv = document.getElementById("boardDiv");
+
+    //create table
+    const boardTable = document.createElement("table");
+
+    //style
+    boardTable.classList = "boardTable";
+    
+    //loop through rows
+    for (let x = 0; x < 10; x++){
+        //create table row
+        const boardRow = document.createElement("tr");
+        //style
+        boardRow.classList = "boardRow";
+        
+        //loop through columns
+        for (let y = 0; y < 10; y++){
+            //create cell
+            const boardCell = document.createElement("td");
+            //style
+            boardCell.classList = "boardCell boardCellUnseen";
+            //add attribute for finding by position and sending position for clicks
+            boardCell.setAttribute("position", `${x}, ${y}`);
+            
+            //add listener for left click and call function with given position
+            boardCell.addEventListener("click", (event) =>{
+                cellClicked(x, y);
+            });
+            //add listener for right click and call function with given position
+            boardCell.addEventListener("contextmenu", (event) =>{
+                //cancel opening context menu on right click
+                event.preventDefault();
+                cellFlagged(x, y);
+            });
+
+            //add cell to row
+            boardRow.appendChild(boardCell);
+        }
+
+        //add row to table
+        boardTable.appendChild(boardRow);
+    }
+
+    //add board to screen
+    boardDiv.replaceChildren(boardTable);
+}
+
+
+
+/* example of functional api call, for use when integrating
+
+function startGame() {
+    fetch("http://localhost:8000/setup", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+        x: 10,
+        y: 10,
+        n: 10
+        })
+    }).then(res => {
+        console.log("log");
+        return res.text()
+    }).then(text => {
+        alert(text)
+    })
+}
+*/
+</script>
