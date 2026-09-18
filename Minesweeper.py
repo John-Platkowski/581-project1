@@ -126,7 +126,16 @@ class Minesweeper:
             return 1
         return 2
 
+        #Can return number of placed flags to make displaying easier
     def Flag(self, x, y):
-        #this should flag a square
-        #ensure that other information is not lost
-        pass
+        #Places a flag on the square if it's uncovered (flag identifier is -1 since other positive numbers represent number of mines)
+        if (self.visited[x][y] is None):
+            self.visited = -1
+        #Remove flag if the square has a flag
+        elif (self.visited[x][y] == -1):
+            self.visited = None
+        #If the flag action is accidentally done on an already uncovered square, do nothing
+        else:
+            pass
+            
+        #return sum(self.visited[i].count(-1) for i in range(len(self.visited)))
