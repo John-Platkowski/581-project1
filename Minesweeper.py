@@ -119,8 +119,12 @@ class Minesweeper:
     #Nothing should return matrix, should just use internal
     #UI should only call outcome and flag, use self.matrix
     def Outcome(self, x, y):
-        #this should determine game outcome/win/loss
-        pass
+        if self.matrix[x][y] == MINE:
+            return 0
+        self.RecOpen(x,y)
+        if sum(self.visited[i].count(None) for i in range(len(self.visited))) == sum(self.matrix[i].count(MINE) for i in range(len(self.matrix))):
+            return 1
+        return 2
 
     def Flag(self, x, y):
         #this should flag a square
