@@ -130,10 +130,10 @@ class Minesweeper:
     def Flag(self, x, y):
         #Places a flag on the square if it's uncovered (flag identifier is -1 since other positive numbers represent number of mines)
         if (self.visited[x][y] is None):
-            self.visited = -1
+            self.visited[x][y] = -1
         #Remove flag if the square has a flag
         elif (self.visited[x][y] == -1):
-            self.visited = None
+            self.visited[x][y] = None
         #If the flag action is accidentally done on an already uncovered square, do nothing
         else:
             pass
