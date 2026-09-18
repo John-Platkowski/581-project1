@@ -124,6 +124,9 @@ class Minesweeper:
     #Nothing should return matrix, should just use internal
     #UI should only call outcome and flag, use self.matrix
     def Outcome(self, x, y):
+        if self.visited[x][y] == FLAG:
+            return RUNNING
+        
         if self.matrix[x][y] == MINE:
             self.visited[x][y] = EXPLODED_MINE
             self.EndBoard()
