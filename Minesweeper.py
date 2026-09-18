@@ -54,6 +54,7 @@ class Minesweeper:
                  self.RecOpen(*neighbor)
         return
 
+    # John - 09/17/2026
     def CheckSquare(self, x, y):
         #Returns how many mines border (x, y)
         count = 0
@@ -61,7 +62,7 @@ class Minesweeper:
             if self.matrix[nx][ny] == MINE:
                 count += 1
         return count
-
+    # John - 09/17/2026
     def MineAlgorithm(self, x: int, y: int, n: int) -> list[list[int]]:
         #Spawns n mines in a board such that the first click at (x, y) neither instantly loses nor wins
         #(x, y) and its 8 neighbors start without mines, so (x, y) opens a 0 square
@@ -95,7 +96,7 @@ class Minesweeper:
                 return grid
 
         return grid
-
+    # John - 09/17/2026
     def _Neighbors(self, x, y):
         #The in bounds cells touching (x, y)
         for dx in (-1, 0, 1):
@@ -105,7 +106,7 @@ class Minesweeper:
                 nx, ny = x + dx, y + dy
                 if 0 <= nx < self.x_size and 0 <= ny < self.y_size:
                     yield (nx, ny)
-
+    # John - 09/17/2026
     # def _IsInstantWin(self, x, y, n):
     #     #True when opening (x, y) on self.matrix would uncover every safe cell at once
     #     #Basically RecOpen but BFS to not break recursion depth
