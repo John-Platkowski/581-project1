@@ -8,6 +8,12 @@ MINE = 1
 
 #This class will only really store the board state & functions
 #PLEASE FEEL FREE TO MAKE EDITS JUST INSURE THAT YOU CHANGE OTHER CORRESPONDING CALLS
+
+#VISITED MATRIX CONSTANTS
+FLAG = -1
+UNVISITED = None
+#VISITED = >= 0
+
 class Minesweeper:
     #How many placements MineAlgorithm tries before settling for the last one
     MAX_PLACEMENT_ATTEMPTS = 100
@@ -18,17 +24,16 @@ class Minesweeper:
         self.y_size = 10
         #THIS IS THE AUTHORITATIVE LOCATION OF ALL THE BOMBS
         #THIS SHOULD BE TREATED AS STATIC UNLESS STARTING
-        self.matrix = self.MineAlgorithm(x, y, n)
-        #THIS WILL BE THE VISIBLE PART OF THE ARRAY HANDED UP TO THE USER
-        #THIS SHOULD BE THE ONLY THING THAT IS EDITED THROUGHOUT THE PROGRAM
-        self.visited = [[None] * self.y_size for _ in range(self.x_size)]
+        self.matrix = self._empty()
+        self.visited = self._empty()
+        self.MineAlgorithm(x, y, n)
 
     def RecOpen(self, x, y):
         #Check if the coords passed in are invalid 
         if x < 0 or y < 0 or x >= self.x_size or y >= self.y_size:
             return
         #Check if we have already checked this square
-        if self.visited[x][y] is not None:
+        if self.visited[x][y] is not UNVISITED:
             return
 
         #Check for mines in near by squares
@@ -39,15 +44,8 @@ class Minesweeper:
         #We only want to reveal tiles if this square has no mines near it
         if adjacentMines == 0:
             #Check all adjacent tiles
-            self.RecOpen(x,y+1) #Up
-            self.RecOpen(x+1,y) #Right
-            self.RecOpen(x,y-1) #Down
-            self.RecOpen(x-1,y) #Left
-
-            self.RecOpen(x+1,y+1) #Top right diagonal
-            self.RecOpen(x-1,y+1) #Top left diagonal
-            self.RecOpen(x+1,y-1) #Bottom right diagonal
-            self.RecOpen(x-1,y-1) #Bottom left diagonal
+            for neighbor in self._Neighbors(x, y):
+                 self.RecOpen(*neighbor)
         return
 
     def CheckSquare(self, x, y):
@@ -86,7 +84,8 @@ class Minesweeper:
                 grid[cx][cy] = MINE
             #CheckSquare reads self.matrix, so we have to install candidates now
             self.matrix = grid
-            if not self._IsInstantWin(x, y, n):
+            self.visited = self._empty()
+            if self.Outcome(x, y) == 2:
                 return grid
 
         return grid
@@ -101,41 +100,49 @@ class Minesweeper:
                 if 0 <= nx < self.x_size and 0 <= ny < self.y_size:
                     yield (nx, ny)
 
-    def _IsInstantWin(self, x, y, n):
-        #True when opening (x, y) on self.matrix would uncover every safe cell at once
-        #Basically RecOpen but BFS to not break recursion depth
-        seen = {(x, y)}
-        queue = deque([(x, y)])
-        while queue:
-            cx, cy = queue.popleft()
-            if self.CheckSquare(cx, cy) != 0:
-                continue
-            for nx, ny in self._Neighbors(cx, cy):
-                if (nx, ny) not in seen:
-                    seen.add((nx, ny))
-                    queue.append((nx, ny))
-        return len(seen) == self.x_size * self.y_size - n
+    # def _IsInstantWin(self, x, y, n):
+    #     #True when opening (x, y) on self.matrix would uncover every safe cell at once
+    #     #Basically RecOpen but BFS to not break recursion depth
+    #     seen = {(x, y)}
+    #     queue = deque([(x, y)])
+    #     while queue:
+    #         cx, cy = queue.popleft()
+    #         if self.CheckSquare(cx, cy) != 0:
+    #             continue
+    #         for nx, ny in self._Neighbors(cx, cy):
+    #             if (nx, ny) not in seen:
+    #                 seen.add((nx, ny))
+    #                 queue.append((nx, ny))
+    #     return len(seen) == self.x_size * self.y_size - n
 
     #Nothing should return matrix, should just use internal
     #UI should only call outcome and flag, use self.matrix
     def Outcome(self, x, y):
         if self.matrix[x][y] == MINE:
             return 0
+        
         self.RecOpen(x,y)
-        if sum(self.visited[i].count(None) for i in range(len(self.visited))) == sum(self.matrix[i].count(MINE) for i in range(len(self.matrix))):
+        total = sum(self.visited[i].count(UNVISITED) for i in range(len(self.visited)))
+        total += sum(self.visited[i].count(FLAG) for i in range(len(self.visited)))
+        if total == sum(self.matrix[i].count(MINE) for i in range(len(self.matrix))):
             return 1
+        
         return 2
 
         #Can return number of placed flags to make displaying easier
     def Flag(self, x, y):
         #Places a flag on the square if it's uncovered (flag identifier is -1 since other positive numbers represent number of mines)
-        if (self.visited[x][y] is None):
-            self.visited[x][y] = -1
+        if (self.visited[x][y] is UNVISITED):
+            self.visited[x][y] = FLAG
         #Remove flag if the square has a flag
-        elif (self.visited[x][y] == -1):
-            self.visited[x][y] = None
+        elif (self.visited[x][y] == FLAG):
+            self.visited[x][y] = UNVISITED
         #If the flag action is accidentally done on an already uncovered square, do nothing
         else:
             pass
             
         #return sum(self.visited[i].count(-1) for i in range(len(self.visited)))
+
+
+    def _empty(self):
+        return [[UNVISITED] * self.y_size for _ in range(self.x_size)]

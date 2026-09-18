@@ -101,6 +101,7 @@
 
 <script>
 
+var cur_state;
 
 //generates dummy data and feeds it to populate table, purely for test purposes
 function populateTableDummy() {
@@ -122,6 +123,9 @@ function populateTableDummy() {
 //called on left click
 function cellClicked(x, y){
     console.log(`clicked ${x}, ${y}`);
+    if (cur_state != 2){
+        return;
+    }
 	fetch("/board", {
 		method: "POST",
 		headers: {
@@ -136,11 +140,11 @@ function cellClicked(x, y){
 		.then(data => {
 			console.log(data);
 			populateTable(data.board);
-			
-			if (data.result == 1) {
+			cur_state = data.result;
+			if (cur_state == 1) {
 				showWinScreen();
 			}
-			else if (data.result == 0) {
+			else if (cur_state == 0) {
 				showLossScreen();
 			}
 		});
@@ -149,6 +153,9 @@ function cellClicked(x, y){
 //called on right click
 function cellFlagged(x, y){
     console.log(`flagged ${x}, ${y}`);
+    if (cur_state != 2){
+        return;
+    }
 	fetch("/flag", {
 		method: "POST",
 		headers: {
@@ -228,6 +235,7 @@ function populateTable(data) {
             if(cell == -1){
                 //flag on -1
                 boardCell.textContent = "🚩";
+                boardCell.classList = "boardCell boardCellUnseen";
             }
             if(cell == -2){
                 //explosion on -2 (clicked mine)
@@ -313,6 +321,7 @@ document.getElementById("setupForm").addEventListener("submit", function(event) 
 		})
 	})
 		.then(generateTable);
+    cur_state = 2;
 });
 
 </script>
