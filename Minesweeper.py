@@ -4,7 +4,8 @@ from collections import deque
 
 #Values for self.matrix, but perhaps we want it more coherent/extensible so these are consts
 EMPTY = 0
-MINE = 1
+EXPLODED_MINE = -2
+MINE = -3
 
 #This class will only really store the board state & functions
 #PLEASE FEEL FREE TO MAKE EDITS JUST INSURE THAT YOU CHANGE OTHER CORRESPONDING CALLS
@@ -13,6 +14,11 @@ MINE = 1
 FLAG = -1
 UNVISITED = None
 #VISITED = >= 0
+
+#Running Game State
+WIN = 1
+LOSS = 0
+RUNNING = 2
 
 class Minesweeper:
     #How many placements MineAlgorithm tries before settling for the last one
@@ -119,15 +125,20 @@ class Minesweeper:
     #UI should only call outcome and flag, use self.matrix
     def Outcome(self, x, y):
         if self.matrix[x][y] == MINE:
-            return 0
+            self.visited[x][y] = EXPLODED_MINE
+            for i in range(self.x_size):
+                for j in range(self.y_size):
+                    if self.matrix[i][j] == MINE and self.visited[i][j] != EXPLODED_MINE:
+                        self.visited[i][j] = MINE
+            return LOSS
         
         self.RecOpen(x,y)
         total = sum(self.visited[i].count(UNVISITED) for i in range(len(self.visited)))
         total += sum(self.visited[i].count(FLAG) for i in range(len(self.visited)))
         if total == sum(self.matrix[i].count(MINE) for i in range(len(self.matrix))):
-            return 1
+            return WIN
         
-        return 2
+        return RUNNING
 
         #Can return number of placed flags to make displaying easier
     def Flag(self, x, y):
