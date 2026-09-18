@@ -18,9 +18,8 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-
-
 game = None
+mine_count = 10
 
 # pydantic schemas
 class clickRequest(BaseModel):
@@ -28,8 +27,6 @@ class clickRequest(BaseModel):
     y: int
 
 class setupRequest(BaseModel):
-    x: int
-    y: int
     n: int
     
 # fastapi endpoints to be used
@@ -54,27 +51,34 @@ def getState():
 ## THIS NEEDS TO BE REMOVED OR MOVED TO BASIC CLICK/BOARD ENDPOINT
 @app.post("/setup")
 def setupGame(setup: setupRequest):
+    global mine_count
     global game
 
-    game = Minesweeper(setup.x, setup.y, setup.n)
-
+    mine_count = setup.n
+    game = None
 
 ####THESE FUNCTIONS SHOULDN"T RETURN BOARD & OUTCOME/BOARD UPDATE IS BROKEN
 # endpoint that provides functionality for updating the board state
 @app.post("/board")
 def boardUpdate(click: clickRequest):
-    if game:
-        game.Outcome(click.x, click.y)
+    global game
 
-        return { "board": game.matrix }
-    else:
-        raise HTTPException(status_code=404, detail="Board not found")
+    if game is None:
+        game = Minesweeper(click.x,click.y,mine_count)
+    
+    result = game.Outcome(click.x, click.y)
+
+    return {
+            "board": game.visited,
+            "result": result
+            }
+
 
 # endpoint that handles requests requiring flagging functionality
 @app.post("/flag")
 def flagCell(click: clickRequest):
     if game:
         game.Flag(click.x, click.y)
-        return { "board": game.matrix }
+        return { "board": game.visited }
     else:
         raise HTTPException(status_code=404, detail="Board not found")

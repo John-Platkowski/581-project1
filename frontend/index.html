@@ -12,6 +12,12 @@
     <button type="button" onClick="showWinScreen()">showWinScreen</button>
     <button type="button" onClick="showLossScreen()">showLossScreen</button>
 
+    <form id="setupForm">
+	    <label for ="mineCount">Number of mines:</label>
+	    <input type="number" id="mineCount" min="1" max="20" required>
+	    <button type="submit">Start</button>
+    </form>
+
     <!-- Stores Game -->
     <div id="boardDiv"></div>
 </body>
@@ -27,8 +33,7 @@
 
 .endGameText {
     font-size: 100pt;
-    position: absolute;
-    top: 800px;
+    position:absolute;
 }
 
 .winText {
@@ -117,11 +122,47 @@ function populateTableDummy() {
 //called on left click
 function cellClicked(x, y){
     console.log(`clicked ${x}, ${y}`);
+	fetch("/board", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			x: x,
+			y: y
+		})
+	})
+		.then(response => response.json())
+		.then(data => {
+			console.log(data);
+			populateTable(data.board);
+			
+			if (data.result == 1) {
+				showWinScreen();
+			}
+			else if (data.result == 0) {
+				showLossScreen();
+			}
+		});
 }
+
 //called on right click
 function cellFlagged(x, y){
     console.log(`flagged ${x}, ${y}`);
+	fetch("/flag", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			x: x,
+			y: y
+		})
+	})
+		.then(response => response.json())
+		.then(data => populateTable(data.board));
 }
+
 
 //shows win screen
 function showWinScreen() {
@@ -129,12 +170,13 @@ function showWinScreen() {
     const winText = document.createElement("p");
 
     //style to win end text
-    winText.classList = "endGameText winText";
+    winText.className = "endGameText winText";
 
     //fill text
     winText.textContent = "YOU WIN";
     
     //add to game screen
+    const boardDiv = document.getElementById("boardDiv");
     boardDiv.appendChild(winText);
 }
 
@@ -144,12 +186,13 @@ function showLossScreen() {
     const lossText = document.createElement("p");
     
     //style to loss end text
-    lossText.classList = "endGameText lossText";
+    lossText.className = "endGameText lossText";
     
     //fill text
     lossText.textContent = "YOU LOSE";
     
     //add to game screen
+    const boardDiv = document.getElementById("boardDiv");
     boardDiv.appendChild(lossText);
 }
 
@@ -194,8 +237,8 @@ function populateTable(data) {
                 //bomb on -3 (unclicked mine revealed on failure)
                 boardCell.textContent = "💣";
             }
-            if(cell == -4){
-                //unrevealed on -4
+            if(cell == null){
+                //unrevealed on null
                 boardCell.textContent = "";
                 //style for raised square
                 boardCell.classList = "boardCell boardCellUnseen";
@@ -254,27 +297,22 @@ function generateTable() {
     boardDiv.replaceChildren(boardTable);
 }
 
+document.getElementById("setupForm").addEventListener("submit", function(event) {
+	console.log("submitting form");
+	event.preventDefault();
 
+	const mines = Number(document.getElementById("mineCount").value);
 
-/* example of functional api call, for use when integrating
+	fetch("http://localhost:8000/setup", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			n: mines
+		})
+	})
+		.then(generateTable);
+});
 
-function startGame() {
-    fetch("http://localhost:8000/setup", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-        x: 10,
-        y: 10,
-        n: 10
-        })
-    }).then(res => {
-        console.log("log");
-        return res.text()
-    }).then(text => {
-        alert(text)
-    })
-}
-*/
 </script>
