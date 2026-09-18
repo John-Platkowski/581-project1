@@ -126,16 +126,14 @@ class Minesweeper:
     def Outcome(self, x, y):
         if self.matrix[x][y] == MINE:
             self.visited[x][y] = EXPLODED_MINE
-            for i in range(self.x_size):
-                for j in range(self.y_size):
-                    if self.matrix[i][j] == MINE and self.visited[i][j] != EXPLODED_MINE:
-                        self.visited[i][j] = MINE
+            self.EndBoard()
             return LOSS
         
         self.RecOpen(x,y)
         total = sum(self.visited[i].count(UNVISITED) for i in range(len(self.visited)))
         total += sum(self.visited[i].count(FLAG) for i in range(len(self.visited)))
         if total == sum(self.matrix[i].count(MINE) for i in range(len(self.matrix))):
+            self.EndBoard()
             return WIN
         
         return RUNNING
@@ -157,3 +155,9 @@ class Minesweeper:
 
     def _empty(self):
         return [[UNVISITED] * self.y_size for _ in range(self.x_size)]
+
+    def EndBoard(self):
+        for i in range(self.x_size):
+            for j in range(self.y_size):
+                if self.matrix[i][j] == MINE and self.visited[i][j] != EXPLODED_MINE:
+                    self.visited[i][j] = MINE
