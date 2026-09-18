@@ -120,6 +120,11 @@ class Minesweeper:
     #UI should only call outcome and flag, use self.matrix
     def Outcome(self, x, y):
         if self.matrix[x][y] == MINE:
+            self.visited[x][y] = -2
+            for i in range(self.x_size):
+                for j in range(self.y_size):
+                    if self.matrix[i][j] == MINE and self.visited[i][j] != -2:
+                        self.visited[i][j] = -3
             return 0
         self.RecOpen(x,y)
         if sum(self.visited[i].count(None) for i in range(len(self.visited))) == sum(self.matrix[i].count(MINE) for i in range(len(self.matrix))):
