@@ -33,7 +33,7 @@ class Minesweeper:
         self.matrix = self._empty()
         self.visited = self._empty()
         self.MineAlgorithm(x, y, n)
-
+    #Tyler - 9/16/2026
     def RecOpen(self, x, y):
         #Check if the coords passed in are invalid 
         if x < 0 or y < 0 or x >= self.x_size or y >= self.y_size:
@@ -165,3 +165,11 @@ class Minesweeper:
             for j in range(self.y_size):
                 if self.matrix[i][j] == MINE and self.visited[i][j] != EXPLODED_MINE:
                     self.visited[i][j] = MINE
+    #Tyler - 9/19/2026
+    def RemainingMines(self):
+        #Returns the number of remaining mines calculated as number of mines - number of flags
+        #Find the number of mines
+        mine_count = sum(row.count(MINE) for row in self.matrix)
+        #Find the number of flags placed
+        flag_count = sum(row.count(FLAG) for row in self.visited)
+        return mine_count - flag_count
