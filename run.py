@@ -2,14 +2,37 @@ import subprocess
 import time
 import webbrowser
 
+output = subprocess.run(
+    ["pip", "show", "pydantic", "fastapi", "uvicorn"],
+    capture_output=True,
+    text=True
+)
+
+versions = subprocess.run(
+    ["grep", "-i", "version"],
+    input=output.stdout,
+    capture_output=True,
+    text=True
+)
+
+count = 0
+for line in versions.stdout.splitlines():
+    count+=1
+
+if count < 3:
+    subprocess.run(["pip", "install", "-r", "requirements.txt"])
+
 server = subprocess.Popen([
+    "python3",
+    "-m",
     "uvicorn",
-    "main:app"
+    "main:app",
+    "--reload"
 ])
 
 time.sleep(2)
 
-webbrowser.open("http://localhost:8000")
+webbrowser.open("http://localhost:8000/")
 
 try:
     server.wait()
