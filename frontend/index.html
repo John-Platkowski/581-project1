@@ -11,6 +11,8 @@
 	    <button type="submit">Start</button>
     </form>
 
+    <p id="minesRemaining">Remaining mines: </p>
+
     <!-- Stores Game -->
     <div id="boardDiv"></div>
 </body>
@@ -22,6 +24,22 @@
     display: flex;
     justify-content: center;
     align-content: center;
+}
+#minesRemaining{
+  text-align: center;
+  display: none;
+
+  font-family: monospace;
+  font-size: 24px;
+  font-weight: bold;
+
+  margin: 15px auto;
+  padding: 8px 20px;
+
+  width: fit-content;
+
+  background-color: lightgrey;
+  border: 5px outset grey;
 }
 
 .endGameText {
@@ -110,22 +128,10 @@ const colors = [
     "grey"
 ];
 
-//generates dummy data and feeds it to populate table, purely for test purposes
-function populateTableDummy() {
-    const data = [];
-    for (let x = 0; x < 10; x++){
-        data[x] = [];
-        for (let y = 0; y < 10; y++){
-            data[x][y] = x+y-5;
-        }
-    }
-
-
-    populateTable(data);
+//Function to update the mine count text
+function updateMineCount(count) {
+  document.getElementById("minesRemaining").textContent = `Remaining mines: ${count}`;
 }
-
-
-
 
 //called on left click
 function cellClicked(x, y){
@@ -174,7 +180,10 @@ function cellFlagged(x, y){
 		})
 	})
 		.then(response => response.json())
-		.then(data => populateTable(data.board));
+		.then(data => {
+      populateTable(data.board);
+      updateMineCount(data.mines);
+    });
 }
 
 
@@ -321,6 +330,10 @@ document.getElementById("setupForm").addEventListener("submit", function(event) 
 	event.preventDefault();
 
 	const mines = Number(document.getElementById("mineCount").value);
+  //Update the mine count once the game is started
+  updateMineCount(mines);
+  //Set the text box to display the correct number of mines
+  document.getElementById("minesRemaining").style.display = "block";
 
 	fetch("http://localhost:8000/setup", {
 		method: "POST",
@@ -332,6 +345,7 @@ document.getElementById("setupForm").addEventListener("submit", function(event) 
 		})
 	})
 		.then(generateTable);
+    document.getElementById("minesRemaining").style.display = "block";
     cur_state = 2;
 });
 
