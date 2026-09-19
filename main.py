@@ -70,7 +70,8 @@ def boardUpdate(click: clickRequest):
 
     return {
             "board": game.visited,
-            "result": result
+            "result": result,
+            "mines": game.RemainingMines()
             }
 
 
@@ -79,6 +80,9 @@ def boardUpdate(click: clickRequest):
 def flagCell(click: clickRequest):
     if game:
         game.Flag(click.x, click.y)
-        return { "board": game.visited }
+        return { 
+            "board": game.visited,
+            "mines": game.RemainingMines()
+            }
     else:
         raise HTTPException(status_code=404, detail="Board not found")

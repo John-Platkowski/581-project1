@@ -165,3 +165,8 @@ class Minesweeper:
             for j in range(self.y_size):
                 if self.matrix[i][j] == MINE and self.visited[i][j] != EXPLODED_MINE:
                     self.visited[i][j] = MINE
+    
+    def RemainingMines(self):
+        mine_count = sum(row.count(MINE) for row in self.matrix)
+        flag_count = sum(row.count(FLAG) for row in self.visited)
+        return mine_count - flag_count
