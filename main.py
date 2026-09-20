@@ -1,4 +1,15 @@
-# main.py
+#Prologue Comment
+#Module: Main.py
+#Description: Contains FastAPI application that connects frontend to Minesweeper logic. It ahndles API request for board control/input.
+#Input: Inital Mine Count -> mine_count; x,y coordinates for clicks
+#Output:    returns JSON payload containing board state, game state, and remaining mine count
+
+#Authors:
+#   Joshua Lin
+#   Tyler Oswald
+#   Trey Timko
+#Creation Date:
+#   September 17, 2026
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel

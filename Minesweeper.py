@@ -1,14 +1,22 @@
-
+#Prologue Comment
+#Module: Minesweeper.py
+#Description: Contains Minesweeper class which is responsible for all the logic in Minesweeper project. It tracks authoritative board states and provides calculations/storage for other relavant information.
+#Input: Initalization requires n: requested mine count, x: inital x coordinate of click, y: inital y coordinate of click.
+#Output:    visited stores the visible 10x10 version of the matrix
+#           matrix stores the authoritative location of the bombs in the 10x10 matrix
+#           Allows call to request remaining mine/flag calculation
+#Authors:
+#   Joshua Lin
+#   Tyler Oswald
+#   Lena Palmieri
+#   Nickan Safi
+#   John Platkowski
+#Creation Date:
+#   September 16, 2026
 import random
 from collections import deque
 
-#Values for self.matrix, but perhaps we want it more coherent/extensible so these are consts
-EMPTY = 0
-EXPLODED_MINE = -2
-MINE = -3
 
-#This class will only really store the board state & functions
-#PLEASE FEEL FREE TO MAKE EDITS JUST INSURE THAT YOU CHANGE OTHER CORRESPONDING CALLS
 
 #MATRIX CONSTANTS
 EMPTY = 0
@@ -18,7 +26,7 @@ FLAG = -1
 UNVISITED = None
 #VISITED = >= 0
 
-#Running Game State
+#Running Game State Constant
 WIN = 1
 LOSS = 0
 RUNNING = 2
@@ -27,13 +35,18 @@ class Minesweeper:
     #How many placements MineAlgorithm tries before settling for the last one
     MAX_PLACEMENT_ATTEMPTS = 100
 
+    #intialization function - Joshua Lin - 9/16/26
+    #requires input of x, y (coordinates of click in 10x10 grid)
+    #And n or number of mines requested
     def __init__(self, x, y, n):
         #Board sizes
         self.x_size = 10
         self.y_size = 10
-        #THIS IS THE AUTHORITATIVE LOCATION OF ALL THE BOMBS
-        #THIS SHOULD BE TREATED AS STATIC UNLESS STARTING
+
+        #This will be a 10x10 matrix that stores where the mines are
         self.matrix = self._empty()
+
+        #This will be a 10x10 matrix that stores what the visited version of the grid looks like
         self.visited = self._empty()
         self.MineAlgorithm(x, y, n)
 
@@ -167,10 +180,13 @@ class Minesweeper:
             
         #return sum(self.visited[i].count(-1) for i in range(len(self.visited)))
 
-
+    #Joshua - 9/19/26
+    #This returns a board filled in with NONE values
     def _empty(self):
         return [[UNVISITED] * self.y_size for _ in range(self.x_size)]
 
+    #Tyler - 9/19/26
+    #This is used to update the visited board to display mine location at the end of the game
     def EndBoard(self):
         for i in range(self.x_size):
             for j in range(self.y_size):
