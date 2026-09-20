@@ -51,7 +51,10 @@ class Minesweeper:
         self.MineAlgorithm(x, y, n)
 
     #Tyler - 9/16/2026
+    #Edited by Josh
     def RecOpen(self, x, y):
+        #Takes matrix cell position as input in the form of (x,y) pair
+        #Outputs new board state with cells that have no mine neighbors revealed starting from input coords
         #Check if the coords passed in are invalid 
         if x < 0 or y < 0 or x >= self.x_size or y >= self.y_size:
             return
@@ -193,8 +196,10 @@ class Minesweeper:
     #Tyler - 9/19/26
     #This is used to update the visited board to display mine location at the end of the game
     def EndBoard(self):
+        #Loop over all cells in the board
         for i in range(self.x_size):
             for j in range(self.y_size):
+                #Updated visited to display all hidden mines
                 if self.matrix[i][j] == MINE and self.visited[i][j] != EXPLODED_MINE:
                     self.visited[i][j] = MINE
     #Tyler - 9/19/2026
