@@ -142,29 +142,33 @@ class Minesweeper:
 
     #Nothing should return matrix, should just use internal
     #UI should only call outcome and flag, use self.matrix
-    def Outcome(self, x, y):
-        if self.state != RUNNING:
-            return self.state
+    def Outcome(self, x: int, y: int) -> int: #Get the outcome of the game after a click
+        #First written by Nickan on 9/17, commented/type annotated on 9/19
+        #Edited by Joshua, Tyler
+        #Inputs: Minesweeper object and two coordinates
+        #Output: A number equivalent to an outcome
+        if self.state != RUNNING: #If the game is not running
+            return self.state #Return the game state
         
-        if self.visited[x][y] == FLAG:
-            self.state = RUNNING
-            return RUNNING
+        if self.visited[x][y] == FLAG: #If the user tries to click on a flag
+            self.state = RUNNING #The game is running
+            return RUNNING #Ignore the input
         
-        if self.matrix[x][y] == MINE:
-            self.visited[x][y] = EXPLODED_MINE
-            self.EndBoard()
-            self.state = LOSS
-            return LOSS
+        if self.matrix[x][y] == MINE: #If the user clicks a mine
+            self.visited[x][y] = EXPLODED_MINE #The mine explodes
+            self.EndBoard() #The game is over
+            self.state = LOSS #The game state is a loss
+            return LOSS #Return that the game has been lost
         
-        self.RecOpen(x,y)
-        total = sum(self.visited[i].count(UNVISITED) for i in range(len(self.visited)))
-        total += sum(self.visited[i].count(FLAG) for i in range(len(self.visited)))
-        if total == sum(self.matrix[i].count(MINE) for i in range(len(self.matrix))):
-            self.EndBoard()
-            self.state = WIN
-            return WIN
+        self.RecOpen(x,y) #Otherwise, start opening tiles
+        total = sum(self.visited[i].count(UNVISITED) for i in range(len(self.visited))) #Get the number of unvisited tiles
+        total += sum(self.visited[i].count(FLAG) for i in range(len(self.visited))) #Add the number of the number of flagged tiles
+        if total == sum(self.matrix[i].count(MINE) for i in range(len(self.matrix))): #If all mines are unvisited or flagged 
+            self.EndBoard() #The game is over
+            self.state = WIN #The game state is a win
+            return WIN #Return that the game has been won
         
-        return RUNNING
+        return RUNNING #Otherwise, the game continues
 
         #Can return number of placed flags to make displaying easier
     def Flag(self, x, y):
