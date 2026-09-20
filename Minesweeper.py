@@ -173,10 +173,8 @@ class Minesweeper:
         #Can return number of placed flags to make displaying easier
     def Flag(self, x, y):
         #if no available flags, don't do anything
-        if self.RemainingMines() <= 0:
-            return
         #Places a flag on the square if it's uncovered (flag identifier is -1 since other positive numbers represent number of mines)
-        if (self.visited[x][y] is UNVISITED):
+        if (self.visited[x][y] is UNVISITED) and self.RemainingMines() > 0:
             self.visited[x][y] = FLAG
         #Remove flag if the square has a flag
         elif (self.visited[x][y] == FLAG):
