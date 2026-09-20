@@ -170,10 +170,11 @@ class Minesweeper:
         
         return RUNNING #Otherwise, the game continues
 
-        #Can return number of placed flags to make displaying easier
+    #Lena - 09/17/26
+    #This function places and removes flags on the board
     def Flag(self, x, y):
-        #if no available flags, don't do anything
-        #Places a flag on the square if it's uncovered (flag identifier is -1 since other positive numbers represent number of mines)
+        #If no available flags, don't do anything
+        #Places a flag on the square if it's uncovered
         if (self.visited[x][y] is UNVISITED) and self.RemainingMines() > 0:
             self.visited[x][y] = FLAG
         #Remove flag if the square has a flag
@@ -183,7 +184,6 @@ class Minesweeper:
         else:
             pass
             
-        #return sum(self.visited[i].count(-1) for i in range(len(self.visited)))
 
     #Joshua - 9/19/26
     #This returns a board filled in with NONE values
