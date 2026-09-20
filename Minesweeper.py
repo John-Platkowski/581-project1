@@ -33,6 +33,7 @@ class Minesweeper:
         self.matrix = self._empty()
         self.visited = self._empty()
         self.MineAlgorithm(x, y, n)
+
     #Tyler - 9/16/2026
     def RecOpen(self, x, y):
         #Check if the coords passed in are invalid 
@@ -92,6 +93,7 @@ class Minesweeper:
             #CheckSquare reads self.matrix, so we have to install candidates now
             self.matrix = grid
             self.visited = self._empty()
+            self.state = RUNNING
             if self.Outcome(x, y) == 2:
                 return grid
 
@@ -125,12 +127,17 @@ class Minesweeper:
     #Nothing should return matrix, should just use internal
     #UI should only call outcome and flag, use self.matrix
     def Outcome(self, x, y):
+        if self.state != RUNNING:
+            return self.state
+        
         if self.visited[x][y] == FLAG:
+            self.state = RUNNING
             return RUNNING
         
         if self.matrix[x][y] == MINE:
             self.visited[x][y] = EXPLODED_MINE
             self.EndBoard()
+            self.state = LOSS
             return LOSS
         
         self.RecOpen(x,y)
@@ -138,6 +145,7 @@ class Minesweeper:
         total += sum(self.visited[i].count(FLAG) for i in range(len(self.visited)))
         if total == sum(self.matrix[i].count(MINE) for i in range(len(self.matrix))):
             self.EndBoard()
+            self.state = WIN
             return WIN
         
         return RUNNING

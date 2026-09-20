@@ -11,7 +11,7 @@
 	    <button type="submit">Start</button>
     </form>
 
-    <p id="minesRemaining">Remaining mines: </p>
+    <p id="minesRemaining">Remaining flags: </p>
 
     <!-- Stores Game -->
     <div id="boardDiv"></div>
@@ -79,6 +79,22 @@
     font-weight: bolder;
 }
 
+.headerCell {
+    border-style: solid;
+    border-width: 10px;
+    border-color: lightgrey;
+
+    background-color: white;
+
+    height: 50px;
+    width: 50px;
+    text-align: center;
+    font-size: xx-large;
+
+    font-family: monospace;
+    font-weight: bolder;
+}
+
 .boardCellUnseen {
     border-style: outset;
 }
@@ -130,7 +146,7 @@ const colors = [
 
 //Function to update the mine count text
 function updateMineCount(count) {
-  document.getElementById("minesRemaining").textContent = `Remaining mines: ${count}`;
+  document.getElementById("minesRemaining").textContent = `Remaining flags: ${count}`;
 }
 
 //called on left click
@@ -285,13 +301,28 @@ function generateTable() {
 
     //style
     boardTable.classList = "boardTable";
-    
+
+    //add header for column labels
+    const headerRow = document.createElement("tr");
+     headerRow.innerHTML = '<th></th>';
+
+    //Iterate for each letter and add to top row
+    for (let i = 0; i < 10; i++){
+        headerRow.innerHTML += `<th class = 'headerCell'>${String.fromCharCode(65+i)}</th>`
+    }
+    boardTable.appendChild(headerRow);
     //loop through rows
     for (let x = 0; x < 10; x++){
         //create table row
         const boardRow = document.createElement("tr");
         //style
         boardRow.classList = "boardRow";
+
+        //add row label
+        const rowHeader = document.createElement("td");
+        rowHeader.classList = "headerCell";
+        rowHeader.innerText = x;
+        boardRow.appendChild(rowHeader);
         
         //loop through columns
         for (let y = 0; y < 10; y++){
