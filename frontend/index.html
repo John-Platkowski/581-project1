@@ -227,7 +227,9 @@ function cellFlagged(x, y){
 }
 
 
-//shows win screen
+// Jack Larson
+// 9/17/26
+// Displays a text over the game stating a win.
 function showWinScreen() {
     //create text element
     const winText = document.createElement("p");
@@ -243,7 +245,9 @@ function showWinScreen() {
     boardDiv.appendChild(winText);
 }
 
-//shows loss screen
+// Jack Larson
+// 9/17/26
+// Displays a text over the game stating a loss.
 function showLossScreen() {
     //create text element
     const lossText = document.createElement("p");
@@ -259,7 +263,9 @@ function showLossScreen() {
     boardDiv.appendChild(lossText);
 }
 
-//uses given data to populate cells
+// Jack Larson
+// 9/17/26
+// Takes in a 2D array of integers and populates the table.
 function populateTable(data) {
     //loop through rows
     for (let x = 0; x < 10; x++){
@@ -315,7 +321,9 @@ function populateTable(data) {
     }
 }
 
-//creates table onscreen
+// Jack Larson
+// 9/17/26
+// Generates elements of a table and adds it to the document.
 function generateTable() {
     //find board container
     const boardDiv = document.getElementById("boardDiv");
