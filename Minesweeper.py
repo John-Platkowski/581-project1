@@ -125,7 +125,7 @@ class Minesweeper:
 
     #Nothing should return matrix, should just use internal
     #UI should only call outcome and flag, use self.matrix
-    def Outcome(self: Minesweeper, x: Int, y: Int) -> Int: #Get the outcome of the game after a click
+    def Outcome(self, x: Int, y: Int) -> Int: #Get the outcome of the game after a click
         #First written by Nickan on 9/17, commented/type annotated on 9/19
         #Edited by Joshua, Tyler
         #Inputs: Minesweeper object and two coordinates
