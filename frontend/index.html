@@ -166,12 +166,18 @@ function updateMineCount(count) {
   document.getElementById("minesRemaining").textContent = `Remaining flags: ${count}`;
 }
 
-//called on left click
+
+// Trey - 09/18/26
+// function that is performed upon left click, it takes the x and y coordinates of the cell clicked
+// and calls the /board endpoint with the information
 function cellClicked(x, y){
-    console.log(`clicked ${x}, ${y}`);
-    if (cur_state != 2){
-        return;
-    }
+	console.log(`clicked ${x}, ${y}`);
+	
+	if (cur_state != 2){
+        	return;
+	}
+
+	// create the post request to the /board endpoint
 	fetch("/board", {
 		method: "POST",
 		headers: {
@@ -182,26 +188,29 @@ function cellClicked(x, y){
 			y: y
 		})
 	})
-		.then(response => response.json())
+		.then(response => response.json()) // recieve the json response
 		.then(data => {
 			console.log(data);
-			populateTable(data.board);
-			cur_state = data.result;
-			if (cur_state == 1) {
-				showWinScreen();
+			populateTable(data.board); // take the given board data and pass it to populateTable
+			cur_state = data.result; // assigns the result of the game to cur_state
+			if (cur_state == 1) { // if it is 1
+				showWinScreen(); // then the game is won, display corresponding screen
 			}
-			else if (cur_state == 0) {
-				showLossScreen();
+			else if (cur_state == 0) { // if it is 0
+				showLossScreen(); // then the is lost, display corresponding screen
 			}
 		});
 }
 
-//called on right click
+// Trey - 09/18/26
+// function that is performed upon a right click, it takes the x and y coordinates of the cell
+// clicked and passes information over to the /flag endpoint so it can handle flagging functionality
 function cellFlagged(x, y){
     console.log(`flagged ${x}, ${y}`);
     if (cur_state != 2){
         return;
     }
+	// create the post request to the /flag endpoint
 	fetch("/flag", {
 		method: "POST",
 		headers: {
@@ -212,7 +221,7 @@ function cellFlagged(x, y){
 			y: y
 		})
 	})
-		.then(response => {
+		.then(response => { // recieve the json response and determine if a 404 error occured
             if (response.status == 404){
                 throw new Error ("Board Not Created")
             }
@@ -220,9 +229,9 @@ function cellFlagged(x, y){
                 return response.json()
             }
             })
-		.then(data => {
-      populateTable(data.board);
-      updateMineCount(data.mines);
+		.then(data => { 
+      populateTable(data.board); // takes the given board data and populates the table with it
+      updateMineCount(data.mines); // takes the given mine data and updates the mine count with it
     }).catch(error => {console.log(error)});
 }
 
@@ -388,16 +397,20 @@ function generateTable() {
     boardDiv.replaceChildren(boardTable);
 }
 
+// add an event listener to the setupForm button that prevents the usual submit event
+// functionality and instead handles mine count and the post request to the /setup endpoint
 document.getElementById("setupForm").addEventListener("submit", function(event) {
 	console.log("submitting form");
 	event.preventDefault();
-
+	
+	// sets the number of mines to be in the game board
 	const mines = Number(document.getElementById("mineCount").value);
-  //Update the mine count once the game is started
-  updateMineCount(mines);
-  //Set the text box to display the correct number of mines
-  document.getElementById("minesRemaining").style.display = "block";
-
+	//Update the mine count once the game is started
+	updateMineCount(mines);
+	//Set the text box to display the correct number of mines
+	document.getElementById("minesRemaining").style.display = "block";
+	
+	// create the post request to the /setup endpoint
 	fetch("http://localhost:8000/setup", {
 		method: "POST",
 		headers: {
@@ -407,9 +420,9 @@ document.getElementById("setupForm").addEventListener("submit", function(event) 
 			n: mines
 		})
 	})
-		.then(generateTable);
-    document.getElementById("minesRemaining").style.display = "block";
-    cur_state = 2;
+		.then(generateTable); // after setup completes generate a new board for the game
+	document.getElementById("minesRemaining").style.display = "block";
+	cur_state = 2;
 });
 
 </script>
