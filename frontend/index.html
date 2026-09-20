@@ -212,11 +212,18 @@ function cellFlagged(x, y){
 			y: y
 		})
 	})
-		.then(response => response.json())
+		.then(response => {
+            if (response.status == 404){
+                throw new Error ("Board Not Created")
+            }
+            else{
+                return response.json()
+            }
+            })
 		.then(data => {
       populateTable(data.board);
       updateMineCount(data.mines);
-    });
+    }).catch(error => {console.log(error)});
 }
 
 
